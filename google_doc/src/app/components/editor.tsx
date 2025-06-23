@@ -7,6 +7,8 @@ const Tiptap = () => {
   const editor = useEditor({
     editorProps: {
       attributes: {
+        // dynamic and static style: one in Tailwind and one in classic format
+        style: 'padding-left: 56px; padding-right: 56px',
         class:
           'focus:outline-none bg-white border border-[#C7C7C7] flex flex-col min-h-[1053px] w-[816px] pt-10 pr-15 pb-10 cursor-text ',
       },
