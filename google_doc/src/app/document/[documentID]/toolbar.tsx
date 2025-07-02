@@ -2,7 +2,13 @@
 import { cn } from '@/lib/utils'
 import { useEditorStore } from '@/store/use-editor-store'
 
-import { LucideIcon, Undo2Icon } from 'lucide-react'
+import {
+  LucideIcon,
+  PrinterIcon,
+  Redo2Icon,
+  SpellCheckIcon,
+  Undo2Icon,
+} from 'lucide-react'
 
 interface iButton {
   onClick?: () => void
@@ -39,10 +45,35 @@ export default function ToolBar() {
         onClick: () => editor?.chain().focus().undo().run(),
         isActive: true,
       },
+      {
+        label: 'Redo',
+        icon: Redo2Icon,
+        onClick: () => editor?.chain().focus().redo().run(),
+        isActive: true,
+      },
+      {
+        label: 'Print',
+        icon: PrinterIcon,
+        onClick: () => window.print(),
+        isActive: true,
+      },
+      {
+        label: 'SpellCheck',
+        icon: SpellCheckIcon,
+        onClick: () => {
+          const dom = editor?.view.dom
+          if (!dom) return
+          // get and set global spellcheck attribute to toggle spellcheck
+          const current = dom.getAttribute('spellcheck')
+          dom.setAttribute('spellcheck', current === 'false' ? 'true' : 'false')
+        },
+
+        isActive: true,
+      },
     ],
   ]
   return (
-    <div className='bg-[#F1F4F9] text-background px-2.5 py-0.5  rounded-[24px] min-h-[40px] flex items-center gap-x-0.5 overflow-x-auto'>
+    <div className='bg-[#F1F4F9] text-background px-2.5 py-0.5  rounded-[24px] min-h-[40px] flex items-center gap-x-1 overflow-x-auto'>
       {sections[0].map((item) => (
         // {...item} = 等效于 label = {item.label} ...
         <ToolBarButton key={item.label} {...item} />

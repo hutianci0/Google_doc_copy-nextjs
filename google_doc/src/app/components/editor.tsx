@@ -17,6 +17,7 @@ const Tiptap = () => {
   const editor = useEditor({
     onCreate({ editor }) {
       setEditor(editor)
+      editor.view.dom.setAttribute('spellcheck', 'true')
     },
     onDestroy() {
       setEditor(null)
