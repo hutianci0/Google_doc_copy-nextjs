@@ -1,5 +1,6 @@
 'use client'
 
+import { useEditorStore } from '@/store/use-editor-store'
 import Image from '@tiptap/extension-image'
 import Table from '@tiptap/extension-table'
 import TableCell from '@tiptap/extension-table-cell'
@@ -12,7 +13,32 @@ import StarterKit from '@tiptap/starter-kit'
 import ImageResize from 'tiptap-extension-resize-image'
 
 const Tiptap = () => {
+  const { setEditor } = useEditorStore()
   const editor = useEditor({
+    onCreate({ editor }) {
+      setEditor(editor)
+    },
+    onDestroy() {
+      setEditor(null)
+    },
+    onUpdate({ editor }) {
+      setEditor(editor)
+    },
+    onSelectionUpdate({ editor }) {
+      setEditor(editor)
+    },
+    onTransaction({ editor }) {
+      setEditor(editor)
+    },
+    onFocus({ editor }) {
+      setEditor(editor)
+    },
+    onBlur({ editor }) {
+      setEditor(editor)
+    },
+    onContentError({ editor }) {
+      setEditor(editor)
+    },
     editorProps: {
       attributes: {
         // dynamic and static style: one in Tailwind and one in classic format
@@ -21,6 +47,7 @@ const Tiptap = () => {
           'focus:outline-none bg-white border border-[#C7C7C7] flex flex-col min-h-[1053px] w-[816px] pt-10 pr-15 pb-10 cursor-text ',
       },
     },
+    immediatelyRender: false,
     extensions: [
       StarterKit,
       Image,
