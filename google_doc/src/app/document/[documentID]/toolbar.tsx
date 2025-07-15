@@ -1,12 +1,14 @@
-'use client';
+'use client'
 
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { cn } from '@/lib/utils';
-import { useEditorStore } from '@/store/use-editor-store';
-
+import { Button } from '@/components/ui/button'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Separator } from '@/components/ui/separator'
+import { cn } from '@/lib/utils'
+import { useEditorStore } from '@/store/use-editor-store'
+import { Level } from '@tiptap/extension-heading'
 import {
   BoldIcon,
+  ChevronDownIcon,
   ItalicIcon,
   ListTodoIcon,
   LucideIcon,
@@ -17,12 +19,12 @@ import {
   SpellCheckIcon,
   UnderlineIcon,
   Undo2Icon,
-} from 'lucide-react';
+} from 'lucide-react'
 
 interface ToolBarButtonProps {
-  onClick?: () => void;
-  isActive?: boolean;
-  icon: LucideIcon;
+  onClick?: () => void
+  isActive?: boolean
+  icon: LucideIcon
 }
 
 const ToolBarButton = ({ onClick, isActive, icon: Icon }: ToolBarButtonProps) => {
@@ -36,24 +38,139 @@ const ToolBarButton = ({ onClick, isActive, icon: Icon }: ToolBarButtonProps) =>
     >
       <Icon className="size-4" />
     </Button>
-  );
-};
+  )
+}
 
+const FontFamilyButton = () => {
+  const { editor } = useEditorStore()
+  const FontOptions = [
+    {
+      label: 'Arial',
+      value: 'Arial',
+    },
+    { label: 'Times New Roman', value: 'Times New Roman' },
+    { label: 'Courier New', value: 'Courier New' },
+    { label: 'Georgia', value: 'Georgia' },
+    { label: 'Palatino', value: 'Palatino' },
+    { label: 'Garamond', value: 'Garamond' },
+    { label: 'Bookman', value: 'Bookman' },
+  ]
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button className="h-7 w-[120px] shrink-0 items-center  flex justify-between rounded-sm  hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm">
+            <span className="truncate">{editor?.getAttributes('textStyle').fontFamily || 'Arial'}</span>
+            <ChevronDownIcon className="ml-2 size-4 shrink-0 " />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="p-1 flex flex-col gay-y-1">
+          {FontOptions.map(({ label, value }) => (
+            <DropdownMenuItem
+              key={value}
+              onClick={() => {
+                editor?.chain().focus().setFontFamily(value).run()
+              }}
+            >
+              {/* only native css Tailwind cannot do */}
+              <span style={{ fontFamily: value }}>{label}</span>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
+  )
+}
+
+const HeadingButton = () => {
+  const { editor } = useEditorStore()
+  // textSize style in dropdowns and textareas
+  const HeadingOptions = [
+    {
+      label: 'Normal text',
+      value: 0,
+      textSize: '16px',
+    },
+    {
+      label: 'Heading 1',
+      value: 1,
+      textSize: '32px',
+    },
+    {
+      label: 'Heading 2',
+      value: 2,
+      textSize: '24px',
+    },
+    {
+      label: 'Heading 3',
+      value: 3,
+      textSize: '20px',
+    },
+    {
+      label: 'Heading 4',
+      value: 4,
+      textSize: '18px',
+    },
+    { label: 'Heading 5', value: 5, textSize: '16px' },
+  ]
+
+  const getCurrentHeading = () => {
+    for (let level = 1; level <= 5; level) {
+      if (editor?.isActive('heading', { level })) {
+        return `Heading ${level}`
+      }
+
+      return 'Normal text'
+    }
+  }
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button className="h-7 w-[120px] shrink-0 items-center  flex justify-between rounded-sm  hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm">
+            <span className="truncate">{getCurrentHeading()}</span>
+            <ChevronDownIcon className="ml-2 size-4 shrink-0 " />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="p-1 flex flex-col gay-y-1">
+          {HeadingOptions.map(({ label, value, textSize }) => (
+            <DropdownMenuItem
+              key={value}
+              onClick={() => {
+                if (value === 0) {
+                  editor?.chain().focus().setParagraph().run()
+                } else {
+                  editor
+                    ?.chain()
+                    .focus()
+                    .toggleHeading({ level: value as Level })
+                    .run()
+                }
+              }}
+            >
+              <span style={{ fontSize: textSize }}>{label}</span>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
+  )
+}
 export default function ToolBar() {
-  const { editor } = useEditorStore();
+  const { editor } = useEditorStore()
 
   const toggleSpellcheck = () => {
-    const dom = editor?.view.dom;
-    if (!dom) return;
-    const current = dom.getAttribute('spellcheck');
-    dom.setAttribute('spellcheck', current === 'false' ? 'true' : 'false');
-  };
+    const dom = editor?.view.dom
+    if (!dom) return
+    const current = dom.getAttribute('spellcheck')
+    dom.setAttribute('spellcheck', current === 'false' ? 'true' : 'false')
+  }
 
   const sections: {
-    label: string;
-    icon: LucideIcon;
-    onClick: () => void;
-    isActive: boolean;
+    label: string
+    icon: LucideIcon
+    onClick: () => void
+    isActive: boolean
   }[][] = [
     // === Left group ===
     [
@@ -126,7 +243,7 @@ export default function ToolBar() {
         onClick: () => editor?.chain().unsetAllMarks().run(),
       },
     ],
-  ];
+  ]
 
   return (
     <div className="flex items-center gap-x-1 overflow-x-auto rounded-[24px] bg-neutral-200/80 px-2.5 py-0.5 min-h-[40px]">
@@ -144,6 +261,12 @@ export default function ToolBar() {
       {sections[2].map((item) => (
         <ToolBarButton key={item.label} {...item} />
       ))}
+
+      <Separator orientation="vertical" className="min-h-6 bg-neutral-300" />
+      <FontFamilyButton />
+
+      <Separator orientation="vertical" className="min-h-6 bg-neutral-300" />
+      <HeadingButton />
     </div>
-  );
+  )
 }

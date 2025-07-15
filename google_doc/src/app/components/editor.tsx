@@ -1,45 +1,47 @@
-'use client'
+'use client';
 
-import { useEditorStore } from '@/store/use-editor-store'
-import Image from '@tiptap/extension-image'
-import Table from '@tiptap/extension-table'
-import TableCell from '@tiptap/extension-table-cell'
-import TableHeader from '@tiptap/extension-table-header'
-import TableRow from '@tiptap/extension-table-row'
-import TaskItem from '@tiptap/extension-task-item'
-import TaskList from '@tiptap/extension-task-list'
-import Underline from '@tiptap/extension-underline'
-import { EditorContent, useEditor } from '@tiptap/react'
-import StarterKit from '@tiptap/starter-kit'
-import ImageResize from 'tiptap-extension-resize-image'
+import { useEditorStore } from '@/store/use-editor-store';
+import FontFamily from '@tiptap/extension-font-family';
+import Image from '@tiptap/extension-image';
+import Table from '@tiptap/extension-table';
+import TableCell from '@tiptap/extension-table-cell';
+import TableHeader from '@tiptap/extension-table-header';
+import TableRow from '@tiptap/extension-table-row';
+import TaskItem from '@tiptap/extension-task-item';
+import TaskList from '@tiptap/extension-task-list';
+import TextStyle from '@tiptap/extension-text-style';
+import Underline from '@tiptap/extension-underline';
+import { EditorContent, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import ImageResize from 'tiptap-extension-resize-image';
 
 const Tiptap = () => {
-  const { setEditor } = useEditorStore()
+  const { setEditor } = useEditorStore();
   const editor = useEditor({
     onCreate({ editor }) {
-      setEditor(editor)
-      editor.view.dom.setAttribute('spellcheck', 'false')
+      setEditor(editor);
+      editor.view.dom.setAttribute('spellcheck', 'false');
     },
     onDestroy() {
-      setEditor(null)
+      setEditor(null);
     },
     onUpdate({ editor }) {
-      setEditor(editor)
+      setEditor(editor);
     },
     onSelectionUpdate({ editor }) {
-      setEditor(editor)
+      setEditor(editor);
     },
     onTransaction({ editor }) {
-      setEditor(editor)
+      setEditor(editor);
     },
     onFocus({ editor }) {
-      setEditor(editor)
+      setEditor(editor);
     },
     onBlur({ editor }) {
-      setEditor(editor)
+      setEditor(editor);
     },
     onContentError({ editor }) {
-      setEditor(editor)
+      setEditor(editor);
     },
     editorProps: {
       attributes: {
@@ -55,7 +57,8 @@ const Tiptap = () => {
       Image,
       ImageResize,
       Underline,
-
+      TextStyle,
+      FontFamily,
       TaskItem.configure({
         nested: true,
       }),
@@ -84,17 +87,17 @@ const Tiptap = () => {
             </tr>
           </tbody>
         </table>`,
-  })
+  });
   return (
-    <div className='size-full overflow-x-auto bg-[#F9FBFD] px-4 print:px-0 print:bg-white print:overflow-visible'>
-      <div className='min-w-max flex justify-center w-[816px] py-4 mx-auto print:w-full print:min-w-0'>
+    <div className="size-full overflow-x-auto bg-[#F9FBFD] px-4 print:px-0 print:bg-white print:overflow-visible">
+      <div className="min-w-max flex justify-center w-[816px] py-4 mx-auto print:w-full print:min-w-0">
         <EditorContent
           editor={editor}
           // print styles for PDF
         />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Tiptap
+export default Tiptap;
