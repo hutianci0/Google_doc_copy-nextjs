@@ -1,25 +1,35 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 import { useEditorStore } from '@/store/use-editor-store'
 import { Level } from '@tiptap/extension-heading'
+
 import {
   BoldIcon,
   ChevronDownIcon,
+  HighlighterIcon,
+  ImageIcon,
   ItalicIcon,
+  Link2Icon,
   ListTodoIcon,
   LucideIcon,
   MessageSquareIcon,
   PrinterIcon,
   Redo2Icon,
   RemoveFormattingIcon,
+  SearchIcon,
   SpellCheckIcon,
   UnderlineIcon,
   Undo2Icon,
+  UploadIcon,
 } from 'lucide-react'
+import { useState } from 'react'
+import { CirclePicker, ColorResult } from 'react-color'
 
 interface ToolBarButtonProps {
   onClick?: () => void
@@ -156,6 +166,169 @@ const HeadingButton = () => {
     </>
   )
 }
+
+const FontColorButton = () => {
+  const { editor } = useEditorStore()
+
+  const color = editor?.getAttributes('textStyle').color || '#0000000'
+  const onChange = (color: ColorResult) => {
+    editor?.chain().focus().setColor(color.hex).run()
+  }
+
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button className="text-sm h-7 shrink-0 min-w-7 flex flex-col justify-center items-center rounded-sm bg-neutral-200/80 hover:bg-neutral-200/80 hover:cursor-pointer ">
+            <span style={{ color: color }}>
+              A
+              <div className="min-h-0.5 w-full" style={{ backgroundColor: color, color }} />
+            </span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="p-2.5">
+          <CirclePicker color={color} onChange={onChange} />
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
+  )
+}
+
+const HighlightButton = () => {
+  const { editor } = useEditorStore()
+
+  const color = '#0000000'
+  const onChange = (color: ColorResult) => {
+    editor?.chain().focus().toggleHighlight({ color: color.hex }).run()
+  }
+
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button className="text-sm h-7 shrink-0 min-w-7 flex flex-col justify-center items-center rounded-sm bg-neutral-200/80 hover:bg-neutral-200/80 hover:cursor-pointer ">
+            <HighlighterIcon size={4} style={{ color: editor?.getAttributes('highlight').color || '#0000000' }} />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="p-2.5">
+          <CirclePicker color={color} onChange={onChange} />
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
+  )
+}
+
+const LinkButtion = () => {
+  const { editor } = useEditorStore()
+  const [link, setLink] = useState<string>('')
+  const onChange = (href: string) => {
+    editor?.chain().extendMarkRange('link').setLink({ href }).run()
+    setLink('')
+  }
+  return (
+    <>
+      {/* 实现复写: 重点在于写在哪个组件 */}
+      <DropdownMenu
+        onOpenChange={(open) => {
+          if (open) {
+            setLink(editor?.getAttributes('link').href || '')
+          }
+        }}
+      >
+        <DropdownMenuTrigger asChild>
+          <Button className="text-sm h-7 shrink-0 min-w-7 flex flex-col justify-center items-center rounded-sm bg-neutral-200/80 hover:bg-neutral-200/80 hover:cursor-pointer text-primary">
+            <Link2Icon size={4} style={{ color: editor?.getAttributes('link').color || '#0000000' }} />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="p-2.5 flex items-center gap-x-2">
+          <Input placeholder="https://example.com" value={link} onChange={(e) => setLink(e.target.value)} />
+          <Button onClick={() => onChange(link)}>submit</Button>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
+  )
+}
+
+const ImageButton = () => {
+  const { editor } = useEditorStore()
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
+  const [imgURL, setURL] = useState<string>('')
+
+  // 插入图片1: 输入地址
+  const onChange = (src: string) => {
+    editor?.chain().setImage({ src }).run()
+    setURL('')
+  }
+
+  // 插入图片2: 本地文件
+  const onUpload = () => {
+    // 原生创建input file
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.accept = 'image/*'
+
+    //设置事件
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0]
+      if (file) {
+        const imgURL = URL.createObjectURL(file)
+        onChange(imgURL)
+      }
+    }
+
+    input.click()
+  }
+
+  const handleImageURLsubmit = () => {
+    if (imgURL) {
+      onChange(imgURL)
+      setURL('')
+      setIsDialogOpen(false)
+    }
+  }
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button className="text-sm h-7 shrink-0 min-w-7 flex flex-col justify-center items-center rounded-sm bg-neutral-200/80 hover:bg-neutral-200/80 hover:cursor-pointer text-primary">
+            <ImageIcon size={4} />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="p-2.5 flex items-center gap-x-2">
+          <DropdownMenuItem onClick={onUpload}>
+            <UploadIcon className="size-4 mr-2" />
+            Upload
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setIsDialogOpen(true)}>
+            <SearchIcon className="size-4 mr-2" />
+            Paste image URL
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      {/* 实现复写: 重点在于写在哪个组件 */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Insert Image URL</DialogTitle>
+            <Input
+              placeholder="image url"
+              value={imgURL}
+              onChange={(e) => setURL(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleImageURLsubmit()
+                }
+              }}
+            />
+          </DialogHeader>
+          <DialogFooter>
+            <Button onClick={handleImageURLsubmit}>Insert</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  )
+}
 export default function ToolBar() {
   const { editor } = useEditorStore()
 
@@ -261,12 +434,18 @@ export default function ToolBar() {
       {sections[2].map((item) => (
         <ToolBarButton key={item.label} {...item} />
       ))}
+      <FontColorButton />
+      <HighlightButton />
 
       <Separator orientation="vertical" className="min-h-6 bg-neutral-300" />
       <FontFamilyButton />
 
       <Separator orientation="vertical" className="min-h-6 bg-neutral-300" />
       <HeadingButton />
+
+      <Separator orientation="vertical" className="min-h-6 bg-neutral-300" />
+      <LinkButtion />
+      <ImageButton />
     </div>
   )
 }

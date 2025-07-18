@@ -75,6 +75,60 @@ const HeadingButton = () => {
   )
 ```
 
+- 配置 color: reac-color + color extension
+- 配置 link
+
+```jsx
+const LinkButtion = () => {
+  const { editor } = useEditorStore()
+  const [link, setLink] = useState < string > (editor?.getAttributes('link').href || '')
+  const onChange = (href: string) => {
+    editor?.chain().extendMarkRange('link').setLink({ href }).run()
+    setLink('')
+  }
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button className="text-sm h-7 shrink-0 min-w-7 flex flex-col justify-center items-center rounded-sm bg-neutral-200/80 hover:bg-neutral-200/80 hover:cursor-pointer ">
+            <Link2Icon size={4} style={{ color: editor?.getAttributes('link').color || '#0000000' }} />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="p-2.5 flex items-center gap-x-2">
+          <Input placeholder="https://example.com" value={link} onChange={(e) => setLink(e.target.value)} />
+          <Button onClick={() => onChange(link)}>submit</Button>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
+  )
+}
+```
+
+- 上传图片
+
+```jsx
+ const onUpload = () => {
+    // 原生创建input file
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.accept = 'image/*'
+
+    //设置事件
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0]
+      if (file) {
+        const imgURL = URL.createObjectURL(file)
+        onChange(imgURL)
+      }
+    }
+
+    input.click()
+  }
+
+```
+
+- 动态设置样式使用原生 style 而不是静态 tailwind
+
 # Shadcn
 
 - Separator: vertical 时需要设置 min-h-xxx 才能显示
