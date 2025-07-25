@@ -10,12 +10,18 @@ import { useEditorStore } from '@/store/use-editor-store'
 import { Level } from '@tiptap/extension-heading'
 
 import {
+  AlignCenterIcon,
+  AlignJustifyIcon,
+  AlignLeftIcon,
+  AlignRightIcon,
   BoldIcon,
   ChevronDownIcon,
   HighlighterIcon,
   ImageIcon,
   ItalicIcon,
   Link2Icon,
+  ListIcon,
+  ListOrderedIcon,
   ListTodoIcon,
   LucideIcon,
   MessageSquareIcon,
@@ -329,6 +335,96 @@ const ImageButton = () => {
     </>
   )
 }
+
+// AlighButton: textAlign extension
+const AlighButton = () => {
+  const { editor } = useEditorStore()
+  // alignments: label,valeu, icon
+  const AlignOptions = [
+    {
+      label: 'Left',
+      value: 'left',
+      icon: AlignLeftIcon,
+    },
+    {
+      label: 'Center',
+      value: 'center',
+      icon: AlignCenterIcon,
+    },
+    {
+      label: 'Right',
+      value: 'right',
+      icon: AlignRightIcon,
+    },
+    {
+      label: 'Justify',
+      value: 'justify',
+      icon: AlignJustifyIcon,
+    },
+  ]
+
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button className="text-sm text-primary h-7 shrink-0 min-w-7 flex flex-col justify-center items-center rounded-sm bg-neutral-200/80 hover:bg-neutral-200/80 hover:cursor-pointer ">
+            <AlignCenterIcon size={4} />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="p-2.5">
+          {AlignOptions.map(({ label, value, icon: Icon }) => {
+            return (
+              <DropdownMenuItem key={value} onClick={() => editor?.chain().focus().setTextAlign(value).run()}>
+                <Icon className="size-4 mr-2" />
+                {label}
+              </DropdownMenuItem>
+            )
+          })}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
+  )
+}
+
+// ListButoon: native editor functions
+const ListButoon = () => {
+  const { editor } = useEditorStore()
+  const ButtonOpt = [
+    {
+      label: 'Bullet List',
+      icon: ListIcon,
+      onClick: () => editor?.chain().focus().toggleBulletList().run(),
+      isActive: editor?.isActive('bulletList') || false,
+    },
+    {
+      label: 'Number List',
+      icon: ListOrderedIcon,
+      onClick: () => editor?.chain().focus().toggleOrderedList().run(),
+      isActive: editor?.isActive('orderedList') || false,
+    },
+  ]
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button className="text-sm text-primary h-7 shrink-0 min-w-7 flex flex-col justify-center items-center rounded-sm bg-neutral-200/80 hover:bg-neutral-200/80 hover:cursor-pointer ">
+            <ListIcon size={4} />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="p-2.5">
+          {ButtonOpt.map(({ label, icon: Icon, onClick, isActive }) => {
+            return (
+              <DropdownMenuItem key={label} onClick={onClick} className={cn(isActive && 'bg-neutral-200/80')}>
+                <Icon className="size-4 mr-2" />
+                {label}
+              </DropdownMenuItem>
+            )
+          })}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
+  )
+}
 export default function ToolBar() {
   const { editor } = useEditorStore()
 
@@ -446,6 +542,10 @@ export default function ToolBar() {
       <Separator orientation="vertical" className="min-h-6 bg-neutral-300" />
       <LinkButtion />
       <ImageButton />
+
+      <Separator orientation="vertical" className="min-h-6 bg-neutral-300" />
+      <AlighButton />
+      <ListButoon />
     </div>
   )
 }
