@@ -25,6 +25,8 @@ import {
   ListTodoIcon,
   LucideIcon,
   MessageSquareIcon,
+  MinusIcon,
+  PlusIcon,
   PrinterIcon,
   Redo2Icon,
   RemoveFormattingIcon,
@@ -425,6 +427,91 @@ const ListButoon = () => {
     </>
   )
 }
+
+// FontSize button
+const FontSizeButton = () => {
+  const { editor } = useEditorStore()
+
+  // get default fontSize value
+  const currentFontSize = editor?.getAttributes('textStyle').fontSize
+    ? editor?.getAttributes('textStyle').fontSize.replace('px', '')
+    : '16'
+
+  // set State for controlled input, fontsize and isEditing
+  const [fontSize, setFontSize] = useState(currentFontSize)
+  const [isEditing, setIsEditing] = useState(false)
+  const [inputValue, setInputValue] = useState(fontSize)
+
+  // update fontSize
+  const updateFontSize = (fontSize: string) => {
+    const size = parseInt(fontSize)
+    if (!isNaN(size) && size > 0) {
+      editor?.chain().focus().setfontSize(`${size}px`).run()
+      setFontSize(fontSize)
+      setIsEditing(false)
+      setInputValue(fontSize)
+    }
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFontSize(e.target.value)
+  }
+
+  const handleInputBlur = () => {
+    updateFontSize(fontSize)
+  }
+
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      updateFontSize(fontSize)
+      editor?.commands.focus()
+    }
+  }
+
+  const increment = () => {
+    const size = parseInt(fontSize) + 1
+    updateFontSize(size.toString())
+  }
+
+  const decrement = () => {
+    const size = parseInt(fontSize) - 1
+    if (size > 0) {
+      updateFontSize(size.toString())
+    }
+  }
+
+  return (
+    <div className="flex items-center  gap-x-0.5">
+      <Button onClick={decrement}>
+        <MinusIcon />
+      </Button>
+      {isEditing ? (
+        <Input
+          value={inputValue}
+          onChange={handleInputChange}
+          onBlur={handleInputBlur}
+          onKeyDown={handleInputKeyDown}
+          className="h-7 w-10 text-sm border border-neutral-400 hover:bg-neutral-200/80 rounded-sm"
+        />
+      ) : (
+        <Button
+          className="h-7 w-10 text-sm  border border-neutral-400 hover:bg-neutral-200/80 rounded-sm"
+          onClick={() => {
+            setFontSize(currentFontSize)
+            setIsEditing(true)
+          }}
+        >
+          {currentFontSize}
+        </Button>
+      )}
+
+      <Button onClick={increment}>
+        <PlusIcon />
+      </Button>
+    </div>
+  )
+}
 export default function ToolBar() {
   const { editor } = useEditorStore()
 
@@ -546,6 +633,7 @@ export default function ToolBar() {
       <Separator orientation="vertical" className="min-h-6 bg-neutral-300" />
       <AlighButton />
       <ListButoon />
+      <FontSizeButton />
     </div>
   )
 }
