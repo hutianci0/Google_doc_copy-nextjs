@@ -20,6 +20,7 @@ import {
   ImageIcon,
   ItalicIcon,
   Link2Icon,
+  ListCollapseIcon,
   ListIcon,
   ListOrderedIcon,
   ListTodoIcon,
@@ -446,21 +447,25 @@ const FontSizeButton = () => {
   const updateFontSize = (fontSize: string) => {
     const size = parseInt(fontSize)
     if (!isNaN(size) && size > 0) {
+      // 改变字体
       editor?.chain().focus().setfontSize(`${size}px`).run()
+      // 改变视图
       setFontSize(fontSize)
       setIsEditing(false)
       setInputValue(fontSize)
     }
   }
 
+  // input 的 双向绑定
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFontSize(e.target.value)
   }
 
+  // 手动输入触发更改
   const handleInputBlur = () => {
     updateFontSize(fontSize)
   }
-
+  // 手动输入触发更改
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault()
@@ -469,6 +474,7 @@ const FontSizeButton = () => {
     }
   }
 
+  // + - 修改
   const increment = () => {
     const size = parseInt(fontSize) + 1
     updateFontSize(size.toString())
@@ -483,7 +489,7 @@ const FontSizeButton = () => {
 
   return (
     <div className="flex items-center  gap-x-0.5">
-      <Button onClick={decrement}>
+      <Button onClick={decrement} variant={'ghost'}>
         <MinusIcon />
       </Button>
       {isEditing ? (
@@ -492,24 +498,62 @@ const FontSizeButton = () => {
           onChange={handleInputChange}
           onBlur={handleInputBlur}
           onKeyDown={handleInputKeyDown}
-          className="h-7 w-10 text-sm border border-neutral-400 hover:bg-neutral-200/80 rounded-sm"
+          className="h-7 w-10 text-sm  border border-neutral-400 bg-transparent focus:outline-none focus:right-0 rounded-sm"
         />
       ) : (
         <Button
-          className="h-7 w-10 text-sm  border border-neutral-400 hover:bg-neutral-200/80 rounded-sm"
+          className="h-7 w-10 text-sm  text-primary border border-neutral-400 bg-transparent rounded-sm cursor-text"
           onClick={() => {
             setFontSize(currentFontSize)
             setIsEditing(true)
           }}
+          variant={'outline'}
         >
           {currentFontSize}
         </Button>
       )}
 
-      <Button onClick={increment}>
+      <Button onClick={increment} variant={'ghost'}>
         <PlusIcon />
       </Button>
     </div>
+  )
+}
+
+// LineHeight button
+const LineHeightButton = () => {
+  const { editor } = useEditorStore()
+  const LHOpt = [
+    { label: 'default', value: 'normal' },
+    { label: 'single', value: '1' },
+    { label: '1.15', value: '1.15' },
+    { label: '1.5', value: '1.5' },
+    { label: 'double', value: '2' },
+  ]
+
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button className="text-sm text-primary h-7 shrink-0 min-w-7 flex flex-col justify-center items-center rounded-sm bg-neutral-200/80 hover:bg-neutral-200/80 hover:cursor-pointer ">
+            <ListCollapseIcon size={4} />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="p-2.5">
+          {LHOpt.map(({ label, value }) => {
+            return (
+              <DropdownMenuItem
+                key={value}
+                onClick={() => editor?.chain().focus().setlineHeight(value).run()}
+                className={cn(editor?.getAttributes('paragraph').lineHeight === value && 'bg-neutral-200/80')}
+              >
+                {label}
+              </DropdownMenuItem>
+            )
+          })}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
   )
 }
 export default function ToolBar() {
@@ -634,6 +678,7 @@ export default function ToolBar() {
       <AlighButton />
       <ListButoon />
       <FontSizeButton />
+      <LineHeightButton />
     </div>
   )
 }

@@ -1,5 +1,6 @@
 'use client'
 
+import { lineHeightExtension } from '@/extension/font-height'
 import { FontSizeExtension } from '@/extension/fontsize'
 import { useEditorStore } from '@/store/use-editor-store'
 import Color from '@tiptap/extension-color'
@@ -58,6 +59,7 @@ const Tiptap = () => {
     immediatelyRender: false,
     extensions: [
       FontSizeExtension,
+      lineHeightExtension,
       StarterKit,
       Image,
       ImageResize,
