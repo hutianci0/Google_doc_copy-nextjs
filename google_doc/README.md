@@ -128,6 +128,8 @@ const LinkButtion = () => {
 ```
 
 - 动态设置样式使用原生 style 而不是静态 tailwind
+- `getBoundingClientRect`: 获取元素相对于视口的距离
+- `e.clientX` 和 `e.clientY`: 获取鼠标相对于 event 的坐标
 
 # Shadcn
 

@@ -646,11 +646,18 @@ export default function ToolBar() {
   ]
 
   return (
-    <div className="flex items-center gap-x-1 overflow-x-auto rounded-[24px] bg-neutral-200/80 px-2.5 py-0.5 min-h-[40px]">
+    <div className="flex items-center justify-start gap-x-1 overflow-x-auto rounded-[24px] bg-neutral-200/80 px-2.5 py-0.5 min-h-[40px]">
       {sections[0].map((item) => (
         <ToolBarButton key={item.label} {...item} />
       ))}
 
+      <Separator orientation="vertical" className="min-h-6 bg-neutral-300" />
+      <FontFamilyButton />
+      <Separator orientation="vertical" className="min-h-6 bg-neutral-300" />
+      <HeadingButton />
+      <Separator orientation="vertical" className="min-h-6 bg-neutral-300" />
+
+      <FontSizeButton />
       <Separator orientation="vertical" className="min-h-6 bg-neutral-300" />
 
       {sections[1].map((item) => (
@@ -665,19 +672,13 @@ export default function ToolBar() {
       <HighlightButton />
 
       <Separator orientation="vertical" className="min-h-6 bg-neutral-300" />
-      <FontFamilyButton />
-
-      <Separator orientation="vertical" className="min-h-6 bg-neutral-300" />
-      <HeadingButton />
-
-      <Separator orientation="vertical" className="min-h-6 bg-neutral-300" />
       <LinkButtion />
       <ImageButton />
 
       <Separator orientation="vertical" className="min-h-6 bg-neutral-300" />
       <AlighButton />
       <ListButoon />
-      <FontSizeButton />
+
       <LineHeightButton />
     </div>
   )

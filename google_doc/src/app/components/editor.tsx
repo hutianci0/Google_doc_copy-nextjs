@@ -1,5 +1,6 @@
 'use client'
 
+import { Ruler } from '@/app/document/[documentID]/ruler'
 import { lineHeightExtension } from '@/extension/font-height'
 import { FontSizeExtension } from '@/extension/fontsize'
 import { useEditorStore } from '@/store/use-editor-store'
@@ -113,6 +114,7 @@ const Tiptap = () => {
   })
   return (
     <div className="size-full overflow-x-auto bg-[#F9FBFD] px-4 print:px-0 print:bg-white print:overflow-visible">
+      <Ruler />
       <div className="min-w-max flex justify-center w-[816px] py-4 mx-auto print:w-full print:min-w-0">
         <EditorContent
           editor={editor}
