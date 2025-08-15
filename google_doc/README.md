@@ -127,6 +127,30 @@ const LinkButtion = () => {
 
 ```
 
+- 下载文件
+
+```jsx
+const onDownload = (blog: Blob, fileName: string) => {
+  // 1. 创建一个临时的 URL，用来指向内存中的 Blob 对象
+  const url = URL.createObjectURL(blog)
+
+  // 2. 动态创建一个 <a> 标签
+  const a = document.createElement('a')
+
+  // 3. 把 <a> 标签的 href 设置为刚才生成的 URL
+  a.href = url
+
+  // 4. 设置 <a> 的 download 属性，这样点击时会触发下载，而不是跳转页面
+  a.download = fileName
+
+  // 5. 模拟用户点击 <a> 标签，触发下载动作
+  a.click()
+
+  // 6. 下载完成后，记得释放刚才创建的 URL 对象，避免内存泄漏
+  URL.revokeObjectURL(url)
+}
+```
+
 - 动态设置样式使用原生 style 而不是静态 tailwind
 - `getBoundingClientRect`: 获取元素相对于视口的距离
 - `e.clientX` 和 `e.clientY`: 获取鼠标相对于 event 的坐标
@@ -134,3 +158,8 @@ const LinkButtion = () => {
 # Shadcn
 
 - Separator: vertical 时需要设置 min-h-xxx 才能显示
+
+# NavBar
+
+- logo: logoipsum
+- table: tiptap `insertTable`方法
