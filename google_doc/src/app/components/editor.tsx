@@ -1,9 +1,11 @@
 'use client'
 
-import { Ruler } from '@/app/document/[documentID]/ruler'
+import { Ruler } from '@/app/documents/[documentID]/ruler'
 import { lineHeightExtension } from '@/extension/font-height'
 import { FontSizeExtension } from '@/extension/fontsize'
 import { useEditorStore } from '@/store/use-editor-store'
+import { FloatingToolbar, useLiveblocksExtension } from '@liveblocks/react-tiptap'
+import { useStorage } from '@liveblocks/react/suspense'
 import Color from '@tiptap/extension-color'
 import FontFamily from '@tiptap/extension-font-family'
 import Highlight from '@tiptap/extension-highlight'
@@ -20,9 +22,17 @@ import TextStyle from '@tiptap/extension-text-style'
 import Underline from '@tiptap/extension-underline'
 import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import ImageResize from 'tiptap-extension-resize-image'
-const Tiptap = () => {
+import { Threads } from '../documents/[documentID]/Threads'
+
+interface EditorProps {
+  initialContent?: string | undefined
+}
+const Tiptap = ({ initialContent }: EditorProps) => {
   const { setEditor } = useEditorStore()
+  const liveblocks = useLiveblocksExtension({ initialContent, offlineSupport_experimental: true })
+  const leftMargin = useStorage((root) => root.leftMargin)
+  const rightMargin = useStorage((root) => root.rightMargin)
+
   const editor = useEditor({
     onCreate({ editor }) {
       setEditor(editor)
@@ -52,18 +62,22 @@ const Tiptap = () => {
     editorProps: {
       attributes: {
         // dynamic and static style: one in Tailwind and one in classic format
-        style: 'padding-left: 56px; padding-right: 56px',
+        style: `padding-left: ${leftMargin ?? 56}px; padding-right: ${rightMargin ?? 56}px`,
         class:
           'focus:outline-none bg-white border border-[#C7C7C7] flex flex-col min-h-[1053px] w-[816px] pt-10 pr-15 pb-10 cursor-text ',
       },
     },
     immediatelyRender: false,
     extensions: [
+      liveblocks,
+      StarterKit.configure({
+        history: false,
+      }),
       FontSizeExtension,
       lineHeightExtension,
       StarterKit,
       Image,
-      ImageResize,
+      // ImageResize,
       Underline,
       TextStyle,
       Color,
@@ -106,6 +120,8 @@ const Tiptap = () => {
           // print styles for PDF
         />
       </div>
+      <Threads editor={editor} />
+      <FloatingToolbar editor={editor} />
     </div>
   )
 }

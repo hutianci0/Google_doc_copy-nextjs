@@ -626,8 +626,8 @@ export default function ToolBar() {
       {
         label: 'Comment',
         icon: MessageSquareIcon,
-        isActive: false,
-        onClick: () => console.log('comment'),
+        isActive: editor?.isActive('liveblocksCommentMarks') || false,
+        onClick: () => editor?.chain().focus().addPendingComment().run(),
       },
       {
         label: 'List ToDo',
@@ -678,8 +678,8 @@ export default function ToolBar() {
       <Separator orientation="vertical" className="min-h-6 bg-neutral-300" />
       <AlighButton />
       <ListButoon />
-
       <LineHeightButton />
+      <Separator orientation="vertical" className="min-h-6 bg-neutral-300" />
     </div>
   )
 }

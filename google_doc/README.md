@@ -158,8 +158,28 @@ const onDownload = (blog: Blob, fileName: string) => {
 # Shadcn
 
 - Separator: vertical 时需要设置 min-h-xxx 才能显示
+- Dialog嵌套MenuItem时, 需要在item设置"e => e.preventDefault()"来阻止默认行为
 
 # NavBar
 
 - logo: logoipsum
 - table: tiptap `insertTable`方法
+
+# Tailwind
+
+```css
+[&_svg]:size-5
+/* 等效于 */
+.Button svg {
+  width: 1.25rem; /* 20px */
+  height: 1.25rem;
+}
+```
+
+- [...] → 任意变体语法（Arbitrary Variant），可以写任何合法的 CSS 选择器。
+- &\_svg → 这里的 & 代表当前元素（也就是这个 Button），svg 是后代选择器。所以 &\_svg 就等于 “选择这个按钮里的所有`svg`元素
+- size-5 → Tailwind 的工具类，size-5 = width: 1.25rem; height: 1.25rem;。
+
+# Convex
+
+详情见obsidian 笔记
